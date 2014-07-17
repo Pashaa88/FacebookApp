@@ -28,9 +28,9 @@ public class App {
 		// Create conf builder and set authorization and access keys
 		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 		configurationBuilder.setDebugEnabled(true);
-		configurationBuilder.setOAuthAppId("480341025430254");
-		configurationBuilder.setOAuthAppSecret("045dda836dedc6485d59744a4c07f324");
-		configurationBuilder.setOAuthAccessToken("CAACEdEose0cBAFpJBs2tl1PuuQhIxtvwAORAGAHUzWNHBmw0XkZCZAwfiWDXboJZAtVaMOvA6o3EEtl7SYmhfpgQOTRckdpvn6juZAhA8H5qZA5RG9RKjfjn0sdR9N5Up8Kyzm4DvZC5srgbnL5g3wVhJCFfAikI9ckwWO4ZB3GRBH6DjZC3JDhT7ZBoW7rdtwqKOAcbZARQk5d2s7bCQzwkEP");
+		configurationBuilder.setOAuthAppId("***********");
+		configurationBuilder.setOAuthAppSecret("*************");
+		configurationBuilder.setOAuthAccessToken("***************");
 		configurationBuilder.setOAuthPermissions("email, publish_stream, id, name, first_name, last_name, read_stream , generic, gender");
 		configurationBuilder.setUseSSL(true);
 		configurationBuilder.setJSONStoreEnabled(true);
