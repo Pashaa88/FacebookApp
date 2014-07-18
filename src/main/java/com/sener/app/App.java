@@ -43,7 +43,7 @@ public class App {
         Posts.getFacebookPosts(Facebook, searchPage, sheetPost, sheetComment, workbook);
 
         // Methodenaufruf um Feeds zu erhalten
-        Feeds.getFacebookFeed(Facebook, searchPage);
+        Feeds.getFacebookFeed(Facebook, searchPage, sheetFeed, workbook);
 
         System.out.println("Completed Successful!");
 
