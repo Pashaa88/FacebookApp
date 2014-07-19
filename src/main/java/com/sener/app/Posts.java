@@ -1,11 +1,6 @@
 package com.sener.app;
 
-import facebook4j.Facebook;
-import facebook4j.FacebookException;
-import facebook4j.Post;
-import facebook4j.ResponseList;
-import facebook4j.User;
-import facebook4j.Paging;
+import facebook4j.*;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -16,17 +11,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Posts {
 
     public static void getFacebookPosts(Facebook Facebook, String searchPost, HSSFSheet sheetPost, HSSFSheet sheetComment, HSSFWorkbook workbook) throws FacebookException {
+
+        Calendar calendar = Calendar.getInstance();
+        java.util.Date now = calendar.getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
 
         // Deklarationen
         Cell cellPost, cellComment;
         Row rowPost, rowComment;
 
         // Posts zur Suchseite finden
-        ResponseList<Post> results = Facebook.getPosts(searchPost);
+        ResponseList<Post> results = Facebook.getPosts(searchPost, new Reading().until(currentTimestamp));
 
         //Pagination http://facebook4j.org/en/code-examples.html
 
@@ -78,8 +79,8 @@ public class Posts {
                 cellComment.setCellValue(post.getComments().get(j).getFrom().getName().toString());
 
                 // Geschlecht
-                //cell = row.createCell(cellNumComment++);
-                //cell.setCellValue(user.getGender());
+                //cellComment = rowComment.createCell(cellNumComment++);
+                //cellComment.setCellValue(user.getGender());
 
                 // Herkunftsland - NULLPOINTEREXCEPTION!!!
                 //cell = row.createCell(cellNumComment++);

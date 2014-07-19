@@ -42,8 +42,12 @@ public class App {
         // Methodenaufruf um Posts zu erhalten
         Posts.getFacebookPosts(Facebook, searchPage, sheetPost, sheetComment, workbook);
 
+        System.out.println("Posts Completed!");
+
         // Methodenaufruf um Feeds zu erhalten
         Feeds.getFacebookFeed(Facebook, searchPage, sheetFeed, workbook);
+
+        System.out.println("Feeds Completed!");
 
         System.out.println("Completed Successful!");
 

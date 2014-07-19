@@ -63,13 +63,6 @@ public class Feeds {
 
             // Likes
 
-            System.out.println(feed.getFrom().getName());
-            System.out.println(feed.getMessage());
-            System.out.println(feed.getCreatedTime());
-            System.out.println(feed.getLikes().getPaging());
-            System.out.println(user.getLocale());
-            System.out.println("---------------------------");
-
             FileOutputStream out = null;
             try {
                 // Ergebnisse in Excel-File übertragen
