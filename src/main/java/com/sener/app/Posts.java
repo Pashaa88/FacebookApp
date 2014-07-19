@@ -60,48 +60,44 @@ public class Posts {
             // Für alle Kommentare des einzelnen Posttext
             for (int j = 0; j < post.getComments().size(); j++) {
 
-                // Für jedes einzelne Kommentar
-                for (int k = 0; k < 1; k++) {
+                int cellNumComment = 0;
 
-                    int cellNumComment = 0;
+                // KommentarID
+                cellComment = rowComment.createCell(cellNumComment++);
+                cellComment.setCellValue(post.getComments().get(j).getId());
 
-                    // KommentarID
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(post.getComments().get(j).getId());
+                // UserID
+                cellComment = rowComment.createCell(cellNumComment++);
+                cellComment.setCellValue(post.getComments().get(j).getFrom().getId().toString());
 
-                    // UserID
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(post.getComments().get(j).getFrom().getId().toString());
+                // User aufrufen
+                //User user = Facebook.getUser(post.getComments().get(j).getFrom().getId());
 
-                    // User aufrufen
-                    //User user = Facebook.getUser(post.getComments().get(j).getFrom().getId());
+                // Name
+                cellComment = rowComment.createCell(cellNumComment++);
+                cellComment.setCellValue(post.getComments().get(j).getFrom().getName().toString());
 
-                    // Name
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(post.getComments().get(j).getFrom().getName().toString());
+                // Geschlecht
+                //cell = row.createCell(cellNumComment++);
+                //cell.setCellValue(user.getGender());
 
-                    // Geschlecht
-                    //cell = row.createCell(cellNumComment++);
-                    //cell.setCellValue(user.getGender());
+                // Herkunftsland - NULLPOINTEREXCEPTION!!!
+                //cell = row.createCell(cellNumComment++);
+                //cell.setCellValue(user.getLocale().toString());
+                //System.out.println(user.getLocale());
 
-                    // Herkunftsland - NULLPOINTEREXCEPTION!!!
-                    //cell = row.createCell(cellNumComment++);
-                    //cell.setCellValue(user.getLocale().toString());
-                    //System.out.println(user.getLocale());
+                // Nachricht
+                cellComment = rowComment.createCell(cellNumComment++);
+                cellComment.setCellValue(post.getComments().get(j).getMessage().toString());
 
-                    // Nachricht
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(post.getComments().get(j).getMessage().toString());
+                // Erstellungszeit
+                cellComment = rowComment.createCell(cellNumComment++);
+                cellComment.setCellValue(post.getComments().get(j).getCreatedTime().toString());
 
-                    // Erstellungszeit
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(post.getComments().get(j).getCreatedTime().toString());
+                // Anzahl Likes
+                cellComment = rowComment.createCell(cellNumComment++);
+                cellComment.setCellValue(post.getComments().get(j).getLikeCount().toString());
 
-                    // Anzahl Likes
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(post.getComments().get(j).getLikeCount().toString());
-
-                }
                 // Kommentare zu jedem Post voneinander trennen (Für Datenbankübertragung später rausnehmen)
                 rowComment = sheetComment.createRow(rowNumComment++);
 
