@@ -24,16 +24,14 @@ public class Posts {
         // Deklarationen
         Cell cellPost, cellComment;
         Row rowPost, rowComment;
-        int rowNumPost, rowNumComment;
-        int cellNumPost, cellNumComment;
 
         // Posts zur Suchseite finden
         ResponseList<Post> results = Facebook.getPosts(searchPost);
 
         //Pagination http://facebook4j.org/en/code-examples.html
 
-        rowNumPost = 0;
-        rowNumComment = 0;
+        int rowNumPost = 0;
+        int rowNumComment = 0;
 
         // Für jeden Post
         for (Post post : results) {
@@ -41,7 +39,7 @@ public class Posts {
             rowPost = sheetPost.createRow(rowNumPost++);
             rowComment = sheetComment.createRow(rowNumComment++);
 
-            cellNumPost = 0;
+            int cellNumPost = 0;
 
             // PostID
             cellPost = rowPost.createCell(cellNumPost++);
@@ -65,7 +63,7 @@ public class Posts {
                 // Für jedes einzelne Kommentar
                 for (int k = 0; k < 1; k++) {
 
-                    cellNumComment = 0;
+                    int cellNumComment = 0;
 
                     // KommentarID
                     cellComment = rowComment.createCell(cellNumComment++);
@@ -86,7 +84,7 @@ public class Posts {
                     //cell = row.createCell(cellNumComment++);
                     //cell.setCellValue(user.getGender());
 
-                    // Herkunftsland
+                    // Herkunftsland - NULLPOINTEREXCEPTION!!!
                     //cell = row.createCell(cellNumComment++);
                     //cell.setCellValue(user.getLocale().toString());
                     //System.out.println(user.getLocale());
