@@ -37,7 +37,7 @@ public class App {
         HSSFSheet sheetFeed = workbook.createSheet("Feeds");
 
         // Suchstring
-        String searchPage = "BMW";
+        String searchPage = "22893372268";
 
         // Methodenaufruf um Posts zu erhalten
         Posts.getFacebookPosts(Facebook, searchPage, sheetPost, sheetComment, workbook);

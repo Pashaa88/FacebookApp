@@ -18,29 +18,27 @@ public class Posts {
 
     public static void getFacebookPosts(Facebook Facebook, String searchPost, HSSFSheet sheetPost, HSSFSheet sheetComment, HSSFWorkbook workbook) throws FacebookException {
 
-        Calendar calendar = Calendar.getInstance();
-        java.util.Date now = calendar.getTime();
-        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
-
         // Deklarationen
         Cell cellPost, cellComment;
         Row rowPost, rowComment;
 
-        // Posts zur Suchseite finden
-        ResponseList<Post> results = Facebook.getPosts(searchPost, new Reading().until(currentTimestamp));
+        Calendar calendar = Calendar.getInstance();
+        java.util.Date now = calendar.getTime();
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
 
-        //Pagination http://facebook4j.org/en/code-examples.html
+        // Posts zur Suchseite finden
+        ResponseList<Post> resultsPost = Facebook.getPosts(searchPost, new Reading().until(currentTimestamp));
 
         int rowNumPost = 0;
         int rowNumComment = 0;
 
         // Für jeden Post
-        for (Post post : results) {
+        for (Post post : resultsPost) {
+
+            int cellNumPost = 0;
 
             rowPost = sheetPost.createRow(rowNumPost++);
             rowComment = sheetComment.createRow(rowNumComment++);
-
-            int cellNumPost = 0;
 
             // PostID
             cellPost = rowPost.createCell(cellNumPost++);
@@ -58,66 +56,85 @@ public class Posts {
             cellPost = rowPost.createCell(cellNumPost++);
             cellPost.setCellValue(post.getSharesCount());
 
-            // Für alle Kommentare des einzelnen Posttext
-            for (int j = 0; j < post.getComments().size(); j++) {
+            // Kommentare auslesen
+            ResponseList<Comment> resultsComments = Facebook.getPostComments(post.getId());
 
-                int cellNumComment = 0;
+            int CommentCounter = 0;
 
-                // KommentarID
-                cellComment = rowComment.createCell(cellNumComment++);
-                cellComment.setCellValue(post.getComments().get(j).getId());
+            // Solange bis keine nächste Seite erfolgt
+            do {
 
-                // UserID
-                cellComment = rowComment.createCell(cellNumComment++);
-                cellComment.setCellValue(post.getComments().get(j).getFrom().getId().toString());
+                // Für alle Kommentare des einzelnen Posttext
+                for (Comment comment : resultsComments) {
 
-                // User aufrufen
-                //User user = Facebook.getUser(post.getComments().get(j).getFrom().getId());
+                    int cellNumComment = 0;
 
-                // Name
-                cellComment = rowComment.createCell(cellNumComment++);
-                cellComment.setCellValue(post.getComments().get(j).getFrom().getName().toString());
+                    // KommentarID
+                    cellComment = rowComment.createCell(cellNumComment++);
+                    cellComment.setCellValue(comment.getId());
 
-                // Geschlecht
-                //cellComment = rowComment.createCell(cellNumComment++);
-                //cellComment.setCellValue(user.getGender());
+                    // UserID
+                    cellComment = rowComment.createCell(cellNumComment++);
+                    cellComment.setCellValue(comment.getFrom().getId().toString());
 
-                // Herkunftsland - NULLPOINTEREXCEPTION!!!
-                //cell = row.createCell(cellNumComment++);
-                //cell.setCellValue(user.getLocale().toString());
-                //System.out.println(user.getLocale());
+                    // User aufrufen
+                    //User user = Facebook.getUser(post.getComments().get(j).getFrom().getId());
+                    //ResponseList<User> resultsUser = Facebook.searchUsers(post.getComments().get(j).getFrom().getId());
 
-                // Nachricht
-                cellComment = rowComment.createCell(cellNumComment++);
-                cellComment.setCellValue(post.getComments().get(j).getMessage().toString());
+                    // Name
+                    cellComment = rowComment.createCell(cellNumComment++);
+                    cellComment.setCellValue(comment.getFrom().getName().toString());
 
-                // Erstellungszeit
-                cellComment = rowComment.createCell(cellNumComment++);
-                cellComment.setCellValue(post.getComments().get(j).getCreatedTime().toString());
+                    // Geschlecht
+                    //cellComment = rowComment.createCell(cellNumComment++);
+                    //cellComment.setCellValue(user.getGender());
 
-                // Anzahl Likes
-                cellComment = rowComment.createCell(cellNumComment++);
-                cellComment.setCellValue(post.getComments().get(j).getLikeCount().toString());
+                    // Herkunftsland - NULLPOINTEREXCEPTION!!!
+                    //cell = row.createCell(cellNumComment++);
+                    //cell.setCellValue(user.getLocale().toString());
+                    //System.out.println(user.getLocale());
+                    // OR ResponseList<Location> location = Facebook.searchLocations("UserId");
 
-                // Kommentare zu jedem Post voneinander trennen (Für Datenbankübertragung später rausnehmen)
-                rowComment = sheetComment.createRow(rowNumComment++);
+                    // Nachricht
+                    cellComment = rowComment.createCell(cellNumComment++);
+                    cellComment.setCellValue(comment.getMessage().toString());
 
-            }
+                    // Erstellungszeit
+                    cellComment = rowComment.createCell(cellNumComment++);
+                    cellComment.setCellValue(comment.getCreatedTime().toString());
+
+                    // Anzahl Likes
+                    cellComment = rowComment.createCell(cellNumComment++);
+                    cellComment.setCellValue(comment.getLikeCount().toString());
+
+                    rowComment = sheetComment.createRow(rowNumComment++);
+
+                }
+                if (resultsComments.getPaging().getNext() != null) {
+                    // Nächste Seite der Kommentare
+                    ResponseList<Comment> resultsNextComments = Facebook.fetchNext(resultsComments.getPaging());
+                    resultsComments = resultsNextComments;
+                }
+                else {
+                    break;
+                }
+
+            } while (resultsComments.size() > 0 && resultsComments.getPaging() != null);
+
             // Posts voneinander trennen (Für Datenbankübertragung später rausnehmen)
             rowPost = sheetPost.createRow(rowNumPost++);
 
-            FileOutputStream out = null;
-            try {
-                // Ergebnisse in Excel-File übertragen
-                out = new FileOutputStream(new File("/Users/karatee/Desktop/test.xls"));
-                workbook.write(out);
-                out.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+        }
+        FileOutputStream out = null;
+        try {
+            // Ergebnisse in Excel-File übertragen
+            out = new FileOutputStream(new File("/Users/karatee/Desktop/test.xls"));
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
