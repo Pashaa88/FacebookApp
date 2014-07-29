@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Posts {
 
@@ -42,11 +41,11 @@ public class Posts {
 
             // PostID
             cellPost = rowPost.createCell(cellNumPost++);
-            cellPost.setCellValue(post.getId().toString());
+            cellPost.setCellValue(post.getId());
 
             // Posttext
             cellPost = rowPost.createCell(cellNumPost++);
-            cellPost.setCellValue(post.getMessage().toString());
+            cellPost.setCellValue(post.getMessage());
 
             // Erstellungszeit
             cellPost = rowPost.createCell(cellNumPost++);
@@ -58,8 +57,6 @@ public class Posts {
 
             // Kommentare auslesen
             ResponseList<Comment> resultsComments = Facebook.getPostComments(post.getId());
-
-            int CommentCounter = 0;
 
             // Solange bis keine nächste Seite erfolgt
             do {
@@ -75,7 +72,7 @@ public class Posts {
 
                     // UserID
                     cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(comment.getFrom().getId().toString());
+                    cellComment.setCellValue(comment.getFrom().getId());
 
                     // User aufrufen
                     //User user = Facebook.getUser(post.getComments().get(j).getFrom().getId());
@@ -83,7 +80,7 @@ public class Posts {
 
                     // Name
                     cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(comment.getFrom().getName().toString());
+                    cellComment.setCellValue(comment.getFrom().getName());
 
                     // Geschlecht
                     //cellComment = rowComment.createCell(cellNumComment++);
@@ -97,7 +94,7 @@ public class Posts {
 
                     // Nachricht
                     cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(comment.getMessage().toString());
+                    cellComment.setCellValue(comment.getMessage());
 
                     // Erstellungszeit
                     cellComment = rowComment.createCell(cellNumComment++);
@@ -112,8 +109,8 @@ public class Posts {
                 }
                 if (resultsComments.getPaging().getNext() != null) {
                     // Nächste Seite der Kommentare
-                    ResponseList<Comment> resultsNextComments = Facebook.fetchNext(resultsComments.getPaging());
-                    resultsComments = resultsNextComments;
+                    resultsComments = Facebook.fetchNext(resultsComments.getPaging());
+
                 }
                 else {
                     break;
