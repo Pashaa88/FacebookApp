@@ -75,24 +75,23 @@ public class Posts {
                     cellComment.setCellValue(comment.getFrom().getId());
 
                     // User aufrufen
-                    //User user = Facebook.getUser(post.getComments().get(j).getFrom().getId());
-                    //ResponseList<User> resultsUser = Facebook.searchUsers(post.getComments().get(j).getFrom().getId());
+                    User user = Facebook.getUser(comment.getFrom().getId());
 
                     // Name
                     cellComment = rowComment.createCell(cellNumComment++);
                     cellComment.setCellValue(comment.getFrom().getName());
 
                     // Geschlecht
-                    //cellComment = rowComment.createCell(cellNumComment++);
-                    //cellComment.setCellValue(user.getGender());
+                    cellComment = rowComment.createCell(cellNumComment++);
+                    cellComment.setCellValue(user.getGender());
 
-                    // Herkunftsland - NULLPOINTEREXCEPTION!!!
-                    //cell = row.createCell(cellNumComment++);
-                    //cell.setCellValue(user.getLocale().toString());
-                    //System.out.println(user.getLocale());
-                    // OR ResponseList<Location> location = Facebook.searchLocations("UserId");
+                    // Herkunftsland
+                    cellComment = rowComment.createCell(cellNumComment++);
+                    if (user.getLocale() != null) {
+                        cellComment.setCellValue(user.getLocale().getDisplayCountry());
+                    }
 
-                    // Nachricht
+                    // Kommentartext
                     cellComment = rowComment.createCell(cellNumComment++);
                     cellComment.setCellValue(comment.getMessage());
 
