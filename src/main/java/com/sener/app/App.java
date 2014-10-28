@@ -20,6 +20,7 @@ public class App {
         configurationBuilder.setDebugEnabled(true);
         configurationBuilder.setOAuthAppId("*************");
         configurationBuilder.setOAuthAppSecret("*************");
+        // V2.1 configurationBuilder.setOAuthAccessToken("*************");
         configurationBuilder.setOAuthAccessToken("*************");
         configurationBuilder.setOAuthPermissions("email, publish_stream, id, name, first_name, last_name, read_stream , generic, gender");
         configurationBuilder.setUseSSL(true);
@@ -37,17 +38,23 @@ public class App {
         HSSFSheet sheetFeed = workbook.createSheet("Feeds");
 
         // Suchstring
-        String searchPage = "22893372268";
+        String[] searchPages = Brands.allBrands();
 
-        // Methodenaufruf um Posts zu erhalten
-        Posts.getFacebookPosts(Facebook, searchPage, sheetPost, sheetComment, workbook);
+        for( int brands = 0; brands < searchPages.length; brands++ ) {
 
-        System.out.println("Posts Completed!");
+            // Methodenaufruf um Usergenerierte Posts zu erhalten
+            //Content.getFacebookContents(Facebook, searchContent, sheetPost, sheetComment, workbook);
+            //System.out.println("Content Completed!");
 
-        // Methodenaufruf um Feeds zu erhalten
-        Feeds.getFacebookFeed(Facebook, searchPage, sheetFeed, workbook);
+            // Methodenaufruf um Posts zu erhalten
+            Posts.getFacebookPosts( Facebook , searchPages[brands] , sheetPost , sheetComment, workbook);
+            System.out.println( "Posts Completed!" );
 
-        System.out.println("Feeds Completed!");
+            // Methodenaufruf um Feeds zu erhalten
+            Feeds.getFacebookFeed(Facebook, searchPages[brands], sheetFeed, workbook);
+            System.out.println("Feeds Completed!");
+
+        }
 
         System.out.println("Completed Successful!");
 

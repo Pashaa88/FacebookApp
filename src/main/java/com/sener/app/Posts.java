@@ -2,6 +2,7 @@ package com.sener.app;
 
 import facebook4j.*;
 
+import facebook4j.internal.org.json.JSONArray;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -45,7 +46,9 @@ public class Posts {
 
             // Posttext
             cellPost = rowPost.createCell(cellNumPost++);
-            cellPost.setCellValue(post.getMessage());
+            if (post.getMessage() != null) {
+                cellPost.setCellValue(post.getMessage());
+            }
 
             // Erstellungszeit
             cellPost = rowPost.createCell(cellNumPost++);
@@ -53,13 +56,15 @@ public class Posts {
 
             // Anzahl Shares
             cellPost = rowPost.createCell(cellNumPost++);
-            cellPost.setCellValue(post.getSharesCount());
+            if (post.getSharesCount() != null) {
+                cellPost.setCellValue(post.getSharesCount());
+            }
 
             // Kommentare auslesen
             ResponseList<Comment> resultsComments = Facebook.getPostComments(post.getId());
 
             // Solange bis keine nächste Seite erfolgt
-            do {
+            while (resultsComments.size() > 0 && resultsComments.getPaging().getNext() != null) {
 
                 // Für alle Kommentare des einzelnen Posttext
                 for (Comment comment : resultsComments) {
@@ -91,6 +96,11 @@ public class Posts {
                         cellComment.setCellValue(user.getLocale().getDisplayCountry());
                     }
 
+                    // Freunde
+                    //String query = "SELECT friend_count FROM user WHERE uid = " + user.getId();
+                    //JSONArray jsonArray = Facebook.executeFQL(query);
+                    //System.out.println(jsonArray);
+
                     // Kommentartext
                     cellComment = rowComment.createCell(cellNumComment++);
                     cellComment.setCellValue(comment.getMessage());
@@ -106,7 +116,8 @@ public class Posts {
                     rowComment = sheetComment.createRow(rowNumComment++);
 
                 }
-                if (resultsComments.getPaging().getNext() != null) {
+
+                if (resultsComments.getPaging().getNext() != null || resultsComments.getPaging() != null) {
                     // Nächste Seite der Kommentare
                     resultsComments = Facebook.fetchNext(resultsComments.getPaging());
 
@@ -115,7 +126,7 @@ public class Posts {
                     break;
                 }
 
-            } while (resultsComments.size() > 0 && resultsComments.getPaging() != null);
+            }
 
             // Posts voneinander trennen (Für Datenbankübertragung später rausnehmen)
             rowPost = sheetPost.createRow(rowNumPost++);
