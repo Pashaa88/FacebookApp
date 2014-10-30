@@ -4,7 +4,7 @@ public class Brands {
 
     public static String[] allBrands() {
 
-        String[] searchPages = new String[20];
+        String[] searchPages = new String[52];
         searchPages[0] = "MercedesBenz";
         searchPages[1] = "MercedesAMG";
         searchPages[2] = "BMW";

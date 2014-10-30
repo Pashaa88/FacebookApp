@@ -27,7 +27,8 @@ public class Posts {
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
 
         // Posts zur Suchseite finden
-        ResponseList<Post> resultsPost = Facebook.getPosts(searchPost, new Reading().until(currentTimestamp));
+        //ResponseList<Post> resultsPost = Facebook.getPosts(searchPost, new Reading().until(currentTimestamp));
+        ResponseList<Post> resultsPost = Facebook.getPosts(searchPost, new Reading().since("last week"));
 
         int rowNumPost = 0;
         int rowNumComment = 0;
@@ -35,101 +36,105 @@ public class Posts {
         // Für jeden Post
         for (Post post : resultsPost) {
 
-            int cellNumPost = 0;
+            if (post.getStory() == null) {
 
-            rowPost = sheetPost.createRow(rowNumPost++);
-            rowComment = sheetComment.createRow(rowNumComment++);
+                int cellNumPost = 0;
 
-            // PostID
-            cellPost = rowPost.createCell(cellNumPost++);
-            cellPost.setCellValue(post.getId());
+                rowPost = sheetPost.createRow(rowNumPost++);
+                rowComment = sheetComment.createRow(rowNumComment++);
 
-            // Posttext
-            cellPost = rowPost.createCell(cellNumPost++);
-            if (post.getMessage() != null) {
-                cellPost.setCellValue(post.getMessage());
-            }
+                // PostID
+                cellPost = rowPost.createCell(cellNumPost++);
+                cellPost.setCellValue(post.getId());
 
-            // Erstellungszeit
-            cellPost = rowPost.createCell(cellNumPost++);
-            cellPost.setCellValue(post.getCreatedTime().toString());
+                // Posttext
+                cellPost = rowPost.createCell(cellNumPost++);
+                if (post.getMessage() != null) {
+                    cellPost.setCellValue(post.getMessage());
+                }
 
-            // Anzahl Shares
-            cellPost = rowPost.createCell(cellNumPost++);
-            if (post.getSharesCount() != null) {
-                cellPost.setCellValue(post.getSharesCount());
-            }
+                // Erstellungszeit
+                cellPost = rowPost.createCell(cellNumPost++);
+                cellPost.setCellValue(post.getCreatedTime().toString());
 
-            // Kommentare auslesen
-            ResponseList<Comment> resultsComments = Facebook.getPostComments(post.getId());
+                // Anzahl Shares
+                cellPost = rowPost.createCell(cellNumPost++);
+                if (post.getSharesCount() != null) {
+                    cellPost.setCellValue(post.getSharesCount());
+                }
 
-            // Solange bis keine nächste Seite erfolgt
-            while (resultsComments.size() > 0 && resultsComments.getPaging().getNext() != null) {
+                // Kommentare auslesen
+                ResponseList<Comment> resultsComments = Facebook.getPostComments(post.getId());
 
-                // Für alle Kommentare des einzelnen Posttext
-                for (Comment comment : resultsComments) {
+                // Solange bis keine nächste Seite erfolgt
+                while (resultsComments.size() > 0 && resultsComments.getPaging().getNext() != null) {
 
-                    int cellNumComment = 0;
+                    // Für alle Kommentare des einzelnen Posttext
+                    for (Comment comment : resultsComments) {
 
-                    // KommentarID
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(comment.getId());
+                        int cellNumComment = 0;
 
-                    // UserID
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(comment.getFrom().getId());
+                        // KommentarID
+                        cellComment = rowComment.createCell(cellNumComment++);
+                        cellComment.setCellValue(comment.getId());
 
-                    // User aufrufen
-                    User user = Facebook.getUser(comment.getFrom().getId());
+                        // UserID
+                        cellComment = rowComment.createCell(cellNumComment++);
+                        cellComment.setCellValue(comment.getFrom().getId());
 
-                    // Name
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(comment.getFrom().getName());
+                        // User aufrufen
+                        User user = Facebook.getUser(comment.getFrom().getId());
 
-                    // Geschlecht
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(user.getGender());
+                        // Name
+                        cellComment = rowComment.createCell(cellNumComment++);
+                        cellComment.setCellValue(comment.getFrom().getName());
 
-                    // Herkunftsland
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    if (user.getLocale() != null) {
-                        cellComment.setCellValue(user.getLocale().getDisplayCountry());
+                        // Geschlecht
+                        cellComment = rowComment.createCell(cellNumComment++);
+                        cellComment.setCellValue(user.getGender());
+
+                        // Herkunftsland
+                        cellComment = rowComment.createCell(cellNumComment++);
+                        if (user.getLocale() != null) {
+                            cellComment.setCellValue(user.getLocale().getDisplayCountry());
+                        }
+
+                        // Freunde
+                        //String query = "SELECT friend_count FROM user WHERE uid = " + user.getId();
+                        //JSONArray jsonArray = Facebook.executeFQL(query);
+                        //System.out.println(jsonArray);
+
+                        // Kommentartext
+                        cellComment = rowComment.createCell(cellNumComment++);
+                        cellComment.setCellValue(comment.getMessage());
+
+                        // Erstellungszeit
+                        cellComment = rowComment.createCell(cellNumComment++);
+                        cellComment.setCellValue(comment.getCreatedTime().toString());
+
+                        // Anzahl Likes
+                        cellComment = rowComment.createCell(cellNumComment++);
+                        cellComment.setCellValue(comment.getLikeCount().toString());
+
+                        rowComment = sheetComment.createRow(rowNumComment++);
+
                     }
 
-                    // Freunde
-                    //String query = "SELECT friend_count FROM user WHERE uid = " + user.getId();
-                    //JSONArray jsonArray = Facebook.executeFQL(query);
-                    //System.out.println(jsonArray);
+                    if (resultsComments.getPaging().getNext() != null || resultsComments.getPaging() != null) {
+                        // Nächste Seite der Kommentare
+                        resultsComments = Facebook.fetchNext(resultsComments.getPaging());
 
-                    // Kommentartext
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(comment.getMessage());
-
-                    // Erstellungszeit
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(comment.getCreatedTime().toString());
-
-                    // Anzahl Likes
-                    cellComment = rowComment.createCell(cellNumComment++);
-                    cellComment.setCellValue(comment.getLikeCount().toString());
-
-                    rowComment = sheetComment.createRow(rowNumComment++);
-
+                    } else {
+                        break;
+                    }
                 }
 
-                if (resultsComments.getPaging().getNext() != null || resultsComments.getPaging() != null) {
-                    // Nächste Seite der Kommentare
-                    resultsComments = Facebook.fetchNext(resultsComments.getPaging());
-
-                }
-                else {
-                    break;
-                }
+                // Posts voneinander trennen (Für Datenbankübertragung später rausnehmen)
+                rowPost = sheetPost.createRow(rowNumPost++);
 
             }
 
-            // Posts voneinander trennen (Für Datenbankübertragung später rausnehmen)
-            rowPost = sheetPost.createRow(rowNumPost++);
+
 
         }
         FileOutputStream out = null;

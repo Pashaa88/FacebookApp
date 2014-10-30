@@ -20,7 +20,6 @@ public class App {
         configurationBuilder.setDebugEnabled(true);
         configurationBuilder.setOAuthAppId("*************");
         configurationBuilder.setOAuthAppSecret("*************");
-        // V2.1 configurationBuilder.setOAuthAccessToken("*************");
         configurationBuilder.setOAuthAccessToken("*************");
         configurationBuilder.setOAuthPermissions("email, publish_stream, id, name, first_name, last_name, read_stream , generic, gender");
         configurationBuilder.setUseSSL(true);
@@ -38,7 +37,9 @@ public class App {
         HSSFSheet sheetFeed = workbook.createSheet("Feeds");
 
         // Suchstring
-        String[] searchPages = Brands.allBrands();
+        //String[] searchPages = Brands.allBrands();
+        String[] searchPages = new String[1];
+        searchPages[0] = "BMW";
 
         for( int brands = 0; brands < searchPages.length; brands++ ) {
 

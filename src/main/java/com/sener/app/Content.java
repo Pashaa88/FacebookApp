@@ -6,9 +6,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.util.Calendar;
 
-/**
- * Created by karatee on 28.10.14.
- */
 public class Content {
 
     public static void getFacebookContents(Facebook Facebook, String searchContent, HSSFSheet sheetPost, HSSFSheet sheetComment, HSSFWorkbook workbook) throws FacebookException {

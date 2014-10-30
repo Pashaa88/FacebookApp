@@ -22,7 +22,9 @@ public class Feeds {
         int rowNumFeed = 0;
 
         //searchPost = "";
-        ResponseList<Post> results = Facebook.getFeed(searchPost);
+        //ResponseList<Post> results = Facebook.getFeed(searchPost);
+        ResponseList<Post> results = Facebook.getFeed(searchPost, new Reading().since("last week"));
+
         for (Post feed : results) {
 
             rowFeed = sheetFeed.createRow(rowNumFeed++);
